@@ -17,9 +17,13 @@ export default function Main({ mockAPI }) {
     fetchData();
   }, []);
 
+  const handleAddProject = (name) => {
+    // Sets a new project to the user object
+  };
+
   return (
     <main>
-      <Sidebar projects={projects} />
+      <Sidebar projects={projects} handleAddProject={handleAddProject} />
       <Tasklist project={currentTasks} />
     </main>
   );

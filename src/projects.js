@@ -8,6 +8,12 @@ const projects = {
         priority: "high",
         date: "2022-03-00",
       },
+      {
+        name: "make breakfast",
+        description: "pancakes and eggs",
+        priority: "medium",
+        date: "2022-01-01",
+      },
     ],
   },
   user: {
