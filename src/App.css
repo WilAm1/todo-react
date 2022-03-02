@@ -1,0 +1,33 @@
+/* Initial CSS (not learned styled components */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+body {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#root {
+}
+header {
+  height: 20vh;
+}
+main {
+  display: grid;
+  grid-template-columns: minmax(300px, 30vw) 1fr;
+  min-height: 80vh;
+}
+.task-dates-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.tasks-section {
+  margin: 0 auto;
+  width: 80%;
+}
