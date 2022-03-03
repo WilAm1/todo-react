@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalForm from "./ModalForm";
 import Task from "./Task";
 
-export default function Tasklist({ project }) {
+export default function Tasklist({ project, projectNames }) {
   const { name, tasks } = project;
   const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
   };
-  return Object.keys(project).length !== 0 ? (
+  const handleModalClick = (e) => {
+    if (e.target.classList.contains("modal")) {
+      handleClose();
+    }
+  };
+
+  return projectNames.length !== 0 ? (
     <section className="tasks-section section">
-      <ModalForm show={showModal} handleClose={handleClose} />
+      <ModalForm
+        show={showModal}
+        handleClose={handleClose}
+        taskNames={project.tasks.reduce((accum, curr) => {
+          return !!curr.name ? accum.concat(curr.name) : accum;
+        }, [])}
+        handleModalClick={handleModalClick}
+      />
+
       <h3>{name}</h3>
       <ul className="tasklist">
         {tasks.map((task) => {
@@ -26,7 +40,6 @@ export default function Tasklist({ project }) {
       >
         New Task
       </button>
-      {/* Make Modal */}
     </section>
   ) : (
     <div>No Project Yet</div>

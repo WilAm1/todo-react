@@ -1,11 +1,11 @@
 import React from "react";
 
-export default function TaskDates() {
+export default function TaskDates({ children, handleClick }) {
   return (
     <section className="task-dates-section">
-      <a href="#">Input</a>
-      <a href="#">Today</a>
-      <a href="#">This Week </a>
+      {children}
+      <button onClick={() => handleClick("today")}>Today</button>
+      <button onClick={() => handleClick("week")}>This Week </button>
     </section>
   );
 }

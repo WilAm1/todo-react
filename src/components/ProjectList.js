@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 
-export default function ProjectList({ projects, handleAddProject }) {
+export default function ProjectList({
+  projects,
+  handleAddProject,
+  handleClick,
+}) {
   const [isVisible, setIsVisibile] = useState(false);
   const [projectName, setProjectName] = useState("");
+
+  const checkProjectName = () => {
+    return projects.indexOf(projectName) >= 0;
+  };
 
   return (
     <section className="project-list-section section">
@@ -10,7 +18,11 @@ export default function ProjectList({ projects, handleAddProject }) {
       <ul className="project-list">
         {projects.map((project) => {
           return (
-            <li className="project" key={project}>
+            <li
+              className="project"
+              key={project}
+              onClick={() => handleClick(project)}
+            >
               {project}
             </li>
           );
@@ -26,10 +38,12 @@ export default function ProjectList({ projects, handleAddProject }) {
         className="new-project-wrapper"
         style={{ display: isVisible ? "block" : "none" }}
         onSubmit={(e) => {
-          // TODO Handle Form error if empty
           console.log(projectName);
           setIsVisibile(!isVisible);
           handleAddProject(projectName);
+          if (checkProjectName()) {
+            console.log("Name already in the projects");
+          }
           setProjectName("");
           e.preventDefault();
         }}

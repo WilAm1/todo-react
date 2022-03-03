@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function Modal({ show, handleClose }) {
+export default function Modal({
+  show,
+  handleClose,
+  taskNames,
+  handleModalClick,
+}) {
   const showHideClassName = show ? "modal display-block" : "modal display-none";
   const [formValues, setFormValues] = useState({
     name: "",
     description: "",
     date: "",
     priority: "medium",
+  });
+
+  useEffect(() => {
+    window.addEventListener("click", handleModalClick);
+    return () => window.removeEventListener("click", handleModalClick);
   });
 
   const handleInputChange = (e) => {
@@ -17,12 +27,16 @@ export default function Modal({ show, handleClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (taskNames.indexOf(formValues.name) >= 0) {
+      alert("task name already available");
+    }
+
     console.log(formValues);
   };
 
   return (
     <div className={showHideClassName}>
-      <div className="modal-content modal-main">
+      <div className="modal-content modal-main ">
         <div className="modal-header">
           <h3>This is a modal!</h3>
           <button onClick={handleClose}>X</button>
@@ -52,7 +66,10 @@ export default function Modal({ show, handleClose }) {
             <div className="input-wrapper">
               <label htmlFor="due-date">Date</label>
               <input
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  console.log(e.target.valueAsDate);
+                  handleInputChange(e);
+                }}
                 name="date"
                 type="date"
                 value={formValues.date}
