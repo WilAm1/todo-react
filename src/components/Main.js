@@ -2,21 +2,17 @@ import Sidebar from "./Sidebar";
 import Tasklist from "./TaskList";
 import React, { useState, useEffect } from "react";
 import { isWithinInterval, add, startOfToday, parseISO } from "date-fns";
-
-// TODO Set Today and this week functionality
-// TODO Begin to add State
+import uniqid from "uniqid";
 // TODO Add functionality to buttons!
-
 // TODO Add to firebase
 
 export default function Main({ mockAPI }) {
-  const [projects, setProjects] = useState({ user: {}, default: {} });
-  const [currentTasks, setCurrentTasks] = useState({});
+  const [projects, setProjects] = useState({ default: { tasks: [] } });
+  const [currentTasks, setCurrentTasks] = useState({ tasks: [] });
 
   const fetchData = () => {
-    // set the current project to the default project
     setProjects(mockAPI);
-    setCurrentTasks(mockAPI.default.default);
+    setCurrentTasks(mockAPI.default);
   };
 
   useEffect(() => {
@@ -25,29 +21,56 @@ export default function Main({ mockAPI }) {
   }, []);
 
   const handleProjectClick = (name) => {
-    if (name === "default") {
-      setCurrentTasks(projects.default.default);
-    } else {
-      console.log(projects.user[name]);
-      setCurrentTasks(projects.user[name]);
-    }
+    setCurrentTasks(projects[name]);
   };
 
   const handleAddProject = (name) => {
     // Sets a new project to the user object
     const date = new Date().toLocaleDateString();
     const newObject = {
-      ...projects.user,
-      [name]: {
-        date,
-        tasks: [],
-      },
+      name,
+      dateAdded: date,
+      tasks: [],
     };
     setProjects({
       ...projects,
-      user: newObject,
+      [name]: newObject,
     });
   };
+  const handleDeleteProject = (name) => {
+    const updatedProjects = { ...projects };
+    delete updatedProjects[name];
+    setProjects(updatedProjects);
+    setCurrentTasks(updatedProjects["default"]);
+  };
+
+  const handleAddTask = ({ project, ...task }) => {
+    const newTask = { ...task, id: uniqid() };
+    const updatedTasks = {
+      ...projects[project],
+      tasks: projects[project].tasks.concat(newTask),
+    };
+    setProjects({
+      ...projects,
+      [project]: updatedTasks,
+    });
+    setCurrentTasks(updatedTasks);
+  };
+
+  const handleDeleteTask = ({ project, id }) => {
+    const projectTasks = projects[project].tasks;
+    const deletedTask = projectTasks.find((obj) => obj.id === id);
+    const filteredTasks = {
+      ...projects[project],
+      tasks: projectTasks.filter((task) => task !== deletedTask),
+    };
+    setProjects({
+      ...projects,
+      [project]: filteredTasks,
+    });
+    setCurrentTasks(filteredTasks);
+  };
+  const handleEditTask = () => {};
 
   const getFilteredTasks = (deadline, projectObj) => {
     const tasks = [];
@@ -69,23 +92,22 @@ export default function Main({ mockAPI }) {
       date === "today"
         ? add(startOfToday(), { days: 1 })
         : add(startOfToday(), { weeks: 1 });
-    const tasks = {
-      name: date,
-      tasks: [
-        ...getFilteredTasks(deadline, projects.default),
-        ...getFilteredTasks(deadline, projects.user),
-      ],
-    };
 
-    setCurrentTasks(tasks);
+    const filteredTasks = {
+      name: date,
+      tasks: [...getFilteredTasks(deadline, projects)],
+    };
+    setCurrentTasks(filteredTasks);
   };
 
-  const getProjectNames = () => Object.keys(projects.user);
+  const getProjectNames = () => Object.keys(projects);
+
   return (
     <main>
       <Sidebar
         projects={projects}
         handleAddProject={handleAddProject}
+        handleDeleteProject={handleDeleteProject}
         projectNames={getProjectNames()}
         handleProjectClick={handleProjectClick}
         handleFilterClick={handleFilterClick}
@@ -94,6 +116,8 @@ export default function Main({ mockAPI }) {
         project={currentTasks}
         projectNames={getProjectNames()}
         handleProjectClick={handleProjectClick}
+        handleAddTask={handleAddTask}
+        handleDeleteTask={handleDeleteTask}
       />
     </main>
   );

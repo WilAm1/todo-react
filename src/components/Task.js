@@ -1,18 +1,19 @@
 import React from "react";
 import { formatDistanceToNow, compareAsc } from "date-fns";
-export default function Task({ task }) {
+export default function Task({ task, handleDelete, handleEdit }) {
   const { name, date, description, priority } = task;
   const isExpired =
-    compareAsc(new Date(), new Date(date)) >= 0 ? "due" : "not-due";
-  console.log(isExpired);
+    !!date && compareAsc(new Date(), new Date(date)) >= 0 ? "due" : "not-due";
   return (
     <div className={`task ${isExpired}`}>
       <p>{name}</p>
 
       <div className="task-initial-detail">
-        <span>{formatDistanceToNow(new Date(date), { addSuffix: true })}</span>
-        <button>Edit</button>
-        <button>Delete</button>
+        <span>
+          {!!date && formatDistanceToNow(new Date(date), { addSuffix: true })}
+        </span>
+        <button onClick={handleEdit}>Edit</button>
+        <button onClick={handleDelete}>Delete</button>
       </div>
 
       <div className="task-extended hidden">

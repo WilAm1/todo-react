@@ -1,40 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ModalForm from "./ModalForm";
 import Task from "./Task";
 
-export default function Tasklist({ project, projectNames }) {
+export default function Tasklist({
+  project,
+  projectNames,
+  handleAddTask,
+  handleDeleteTask,
+}) {
   const { name, tasks } = project;
   const [showModal, setShowModal] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
   };
-  const handleModalClick = (e) => {
-    if (e.target.classList.contains("modal")) {
-      handleClose();
-    }
+  const handleEdit = () => {};
+  const handleDelete = (id) => {
+    handleDeleteTask({ id, project: name });
   };
-
   return projectNames.length !== 0 ? (
     <section className="tasks-section section">
       <ModalForm
+        projectNames={projectNames}
         show={showModal}
         handleClose={handleClose}
         taskNames={project.tasks.reduce((accum, curr) => {
           return !!curr.name ? accum.concat(curr.name) : accum;
         }, [])}
-        handleModalClick={handleModalClick}
+        handleAdd={handleAddTask}
       />
 
       <h3>{name}</h3>
       <ul className="tasklist">
         {tasks.map((task) => {
-          return <Task task={task} key={task.name} />;
+          return (
+            <Task
+              task={task}
+              key={task.id}
+              handleEdit={handleEdit}
+              handleDelete={() => handleDelete(task.id)}
+            />
+          );
         })}
       </ul>
       <button
         onClick={() => {
-          console.log("add task and show modal!");
           setShowModal(!showModal);
         }}
       >

@@ -4,15 +4,18 @@ export default function Modal({
   show,
   handleClose,
   taskNames,
-  handleModalClick,
+  handleAdd,
+  projectNames,
 }) {
   const showHideClassName = show ? "modal display-block" : "modal display-none";
-  const [formValues, setFormValues] = useState({
+  const blankForm = {
     name: "",
     description: "",
     date: "",
     priority: "medium",
-  });
+    project: "default",
+  };
+  const [formValues, setFormValues] = useState(blankForm);
 
   useEffect(() => {
     window.addEventListener("click", handleModalClick);
@@ -25,13 +28,22 @@ export default function Modal({
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handleModalClick = (e) => {
+    if (e.target.classList.contains("modal")) {
+      handleClose();
+    }
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (taskNames.indexOf(formValues.name) >= 0) {
       alert("task name already available");
+      console.log("already available");
+      return;
     }
-
-    console.log(formValues);
+    handleAdd(formValues);
+    handleClose();
+    setFormValues(blankForm);
   };
 
   return (
@@ -39,7 +51,6 @@ export default function Modal({
       <div className="modal-content modal-main ">
         <div className="modal-header">
           <h3>This is a modal!</h3>
-          <button onClick={handleClose}>X</button>
         </div>
         <div className="modal-body">
           make some form for the task content
@@ -52,6 +63,7 @@ export default function Modal({
                 type="text"
                 value={formValues.name}
                 placeholder="Run for your life!"
+                required
               />
             </div>
             <div className="input-wrapper">
@@ -67,12 +79,12 @@ export default function Modal({
               <label htmlFor="due-date">Date</label>
               <input
                 onChange={(e) => {
-                  console.log(e.target.valueAsDate);
                   handleInputChange(e);
                 }}
                 name="date"
                 type="date"
                 value={formValues.date}
+                required
               />
             </div>
             <div className="input-wrapper">
@@ -82,10 +94,29 @@ export default function Modal({
                 id="priority"
                 value={formValues.priority}
                 onChange={handleInputChange}
+                required
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
+              </select>
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="project-name">Category</label>{" "}
+              <select
+                name="project"
+                id="project-name"
+                value={formValues.project}
+                onChange={handleInputChange}
+                required
+              >
+                {projectNames.map((name) => {
+                  return (
+                    <option value={name} key={name}>
+                      {name}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <button>Add Task</button>
