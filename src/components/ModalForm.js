@@ -13,7 +13,7 @@ export default function Modal({
     description: "",
     date: "",
     priority: "",
-    project: "",
+    project: "inbox",
   };
   const [formValues, setFormValues] = useState(blankForm);
 

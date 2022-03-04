@@ -1,119 +1,29 @@
 import Sidebar from "./Sidebar";
 import Tasklist from "./TaskList";
-import SignInModal from "./SignInModal";
+
 import React, { useState, useEffect, useMemo } from "react";
 import { isWithinInterval, add, startOfToday, parseISO } from "date-fns";
 import uniqid from "uniqid";
 
-// Firebase imports
-import { initializeApp } from "firebase/app";
-import { getFirebaseConfig } from "./firebase-config";
-import {
-  GoogleAuthProvider,
-  getAuth,
-  signInWithPopup,
-  onAuthStateChanged,
-  signOut,
-} from "firebase/auth";
-
-// TODO Add to firebase
-const firebaseConfig = getFirebaseConfig();
-const firebaseApp = initializeApp(firebaseConfig);
-// const db = getFirestore(firebaseApp);
-export default function Main({ mockAPI }) {
-  const [projects, setProjects] = useState({ inbox: { tasks: [] } });
+export default function Main({ updateUserData, projects }) {
+  // const [projects, setProjects] = useState({ inbox: { tasks: [] } });
   const [currentTasks, setCurrentTasks] = useState({ tasks: [] });
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const defaultUser = {
-    displayName: "Guest",
-    email: "demo@rike.com",
-    photoURL: "/somephoto",
-    id: "guest01",
-  };
-  const [userInfo, setUserInfo] = useState(defaultUser);
-  const fetchData = () => {
-    setProjects(mockAPI);
-    setCurrentTasks(mockAPI.inbox);
-  };
 
-  useEffect(() => {
-    //fetch data
-    fetchData();
-  }, []);
+  // const fetchData = () => {
+  //   setProjects(mockAPI);
+  //   setCurrentTasks(mockAPI.inbox);
+  // };
 
-  useEffect(() => {
-    // subscribe for effects in the firebase
-    console.log(userInfo);
-    const unsubscribe = onAuthStateChanged(getAuth(), authStateObserver);
-    return () => unsubscribe();
-  }, [isSignedIn]);
-
-  const handleSignIn = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth();
-      const res = await signInWithPopup(auth, provider);
-      const credentials = GoogleAuthProvider.credentialFromResult(res);
-      const token = credentials.accessToken;
-      // Signed in info
-      const user = res.user;
-      console.log(user);
-      setIsSignedIn(true);
-    } catch (error) {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-      console.log(errorCode);
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      signOut(getAuth());
-      setIsSignedIn(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const authStateObserver = (user) => {
-    if (user) {
-      console.log(user);
-      const { displayName, email, photoURL, uid } = user;
-      setUserInfo({
-        displayName,
-        email,
-        photoURL,
-        id: uid,
-      });
-    }
-  };
-
-  const handleAddProject = (name) => {
-    // Sets a new project to the user object
-    const date = new Date().toLocaleDateString();
-    const newObject = {
-      name,
-      dateAdded: date,
-      tasks: [],
-    };
-    setProjects({
-      ...projects,
-      [name]: newObject,
-    });
-  };
+  //projects first project load
+  setCurrentTasks(initialProject.inbox);
 
   const handleDeleteProject = (name) => {
-    const updatedProjects = { ...projects };
-    delete updatedProjects[name];
-    setProjects(updatedProjects);
-    setCurrentTasks(updatedProjects.inbox);
+    // const updatedProjects = { ...projects };
+    // delete updatedProjects[name];
+    // setProjects(updatedProjects);
+    setCurrentTasks(projects.inbox);
   };
+
   const handleProjectClick = (name) => {
     setCurrentTasks(projects[name]);
   };
@@ -126,10 +36,6 @@ export default function Main({ mockAPI }) {
       ...projects[project],
       tasks: projects[project].tasks.concat(newTask),
     };
-    setProjects({
-      ...projects,
-      [project]: updatedTasks,
-    });
     setCurrentTasks(updatedTasks);
   };
 
@@ -140,11 +46,11 @@ export default function Main({ mockAPI }) {
       ...projects[project],
       tasks: projectTasks.filter((task) => task !== deletedTask),
     };
+    setCurrentTasks(filteredTasks);
     setProjects({
       ...projects,
       [project]: filteredTasks,
     });
-    setCurrentTasks(filteredTasks);
   };
 
   const getFilteredTasks = (deadline, projectObj) => {
@@ -176,7 +82,8 @@ export default function Main({ mockAPI }) {
   };
 
   const allProjectNames = useMemo(() => Object.keys(projects), [projects]);
-  return isSignedIn ? (
+
+  return (
     <main>
       <Sidebar
         projects={projects}
@@ -185,7 +92,6 @@ export default function Main({ mockAPI }) {
         projectNames={allProjectNames}
         handleProjectClick={handleProjectClick}
         handleFilterClick={handleFilterClick}
-        handleSignOut={handleSignOut}
       />
       <Tasklist
         project={currentTasks}
@@ -194,7 +100,5 @@ export default function Main({ mockAPI }) {
         handleDeleteTask={handleDeleteTask}
       />
     </main>
-  ) : (
-    <SignInModal handleSignIn={handleSignIn} />
   );
 }

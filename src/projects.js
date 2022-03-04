@@ -1,4 +1,4 @@
-const projects = {
+const mockProjects = {
   inbox: {
     name: "inbox",
     tasks: [
@@ -47,4 +47,4 @@ const projects = {
   },
 };
 
-export { projects };
+export { mockProjects };

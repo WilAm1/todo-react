@@ -8,7 +8,6 @@ export default function Sidebar({
   handleProjectClick,
   handleFilterClick,
   handleDeleteProject,
-  handleSignOut,
 }) {
   return (
     <section className="menu-section section">
@@ -21,7 +20,6 @@ export default function Sidebar({
         handleClick={handleProjectClick}
         handleDeleteProject={handleDeleteProject}
       />
-      <button onClick={handleSignOut}>Sign Out</button>
     </section>
   );
 }
