@@ -1,6 +1,6 @@
 const projects = {
-  default: {
-    name: "default",
+  inbox: {
+    name: "inbox",
     tasks: [
       {
         name: "My First Task",

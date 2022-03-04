@@ -12,8 +12,8 @@ export default function Modal({
     name: "",
     description: "",
     date: "",
-    priority: "medium",
-    project: "default",
+    priority: "",
+    project: "",
   };
   const [formValues, setFormValues] = useState(blankForm);
 
@@ -53,7 +53,6 @@ export default function Modal({
           <h3>This is a modal!</h3>
         </div>
         <div className="modal-body">
-          make some form for the task content
           <form className="form form-new-task" onSubmit={handleSubmit}>
             <div className="input-wrapper">
               <label htmlFor="title">Title</label>

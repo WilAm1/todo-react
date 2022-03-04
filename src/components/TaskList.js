@@ -14,7 +14,6 @@ export default function Tasklist({
   const handleClose = () => {
     setShowModal(false);
   };
-  const handleEdit = () => {};
   const handleDelete = (id) => {
     handleDeleteTask({ id, project: name });
   };
@@ -37,7 +36,6 @@ export default function Tasklist({
             <Task
               task={task}
               key={task.id}
-              handleEdit={handleEdit}
               handleDelete={() => handleDelete(task.id)}
             />
           );

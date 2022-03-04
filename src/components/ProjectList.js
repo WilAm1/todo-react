@@ -19,14 +19,16 @@ export default function ProjectList({
     <section className="project-list-section section">
       <h3>Projects</h3>
       <ul className="project-list">
-        {projects.map((project) => {
-          return (
-            <li className="project" key={project}>
-              <span onClick={() => handleClick(project)}> {project}</span>
-              <button onClick={() => handleDelete(project)}>Delete</button>
-            </li>
-          );
-        })}
+        {projects
+          .filter((name) => name !== "inbox")
+          .map((project) => {
+            return (
+              <li className="project" key={project}>
+                <span onClick={() => handleClick(project)}> {project}</span>
+                <button onClick={() => handleDelete(project)}>Delete</button>
+              </li>
+            );
+          })}
       </ul>
       <button
         style={{ display: isVisible ? "none" : "block" }}

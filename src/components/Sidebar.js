@@ -8,18 +8,20 @@ export default function Sidebar({
   handleProjectClick,
   handleFilterClick,
   handleDeleteProject,
+  handleSignOut,
 }) {
-  // TODO Add functionality to taskdates
-  // TODO Filters project based from filter parameters
   return (
     <section className="menu-section section">
-      <TaskDates handleClick={handleFilterClick} />
+      <TaskDates handleClick={handleFilterClick}>
+        <button onClick={() => handleProjectClick("inbox")}>Inbox</button>
+      </TaskDates>
       <ProjectList
         projects={projectNames}
         handleAddProject={handleAddProject}
         handleClick={handleProjectClick}
         handleDeleteProject={handleDeleteProject}
       />
+      <button onClick={handleSignOut}>Sign Out</button>
     </section>
   );
 }
