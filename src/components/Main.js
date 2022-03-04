@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { isWithinInterval, add, startOfToday, parseISO } from "date-fns";
 import uniqid from "uniqid";
 
-export default function Main({ updateUserData, projects }) {
+export default function Main({ handleProjectsUpdate, projects }) {
   // const [projects, setProjects] = useState({ inbox: { tasks: [] } });
   const [currentTasks, setCurrentTasks] = useState({ tasks: [] });
 
@@ -15,12 +15,29 @@ export default function Main({ updateUserData, projects }) {
   // };
 
   //projects first project load
-  setCurrentTasks(initialProject.inbox);
+  // setCurrentTasks(initialProject.inbox);
+  useEffect(() => {
+    setCurrentTasks(projects.inbox);
+  }, []);
+
+  const handleAddProject = (name) => {
+    // Sets a new project to the user object
+    const date = new Date().toLocaleDateString();
+    const newObject = {
+      name,
+      dateAdded: date,
+      tasks: [],
+    };
+    handleProjectsUpdate({
+      ...projects,
+      [name]: newObject,
+    });
+  };
 
   const handleDeleteProject = (name) => {
-    // const updatedProjects = { ...projects };
-    // delete updatedProjects[name];
-    // setProjects(updatedProjects);
+    const updatedProjects = { ...projects };
+    delete updatedProjects[name];
+    handleProjectsUpdate(updatedProjects);
     setCurrentTasks(projects.inbox);
   };
 
@@ -30,13 +47,14 @@ export default function Main({ updateUserData, projects }) {
 
   const handleAddTask = ({ project, ...task }) => {
     console.log(project, projects);
-
     const newTask = { ...task, id: uniqid() };
-    const updatedTasks = {
-      ...projects[project],
-      tasks: projects[project].tasks.concat(newTask),
+    const updatedTasks = projects[project].tasks.concat(newTask);
+    const updatedProjects = {
+      ...projects,
+      [project]: { ...projects[project], tasks: updatedTasks },
     };
-    setCurrentTasks(updatedTasks);
+    setCurrentTasks(updatedProjects[project]);
+    handleProjectsUpdate(updatedProjects);
   };
 
   const handleDeleteTask = ({ project, id }) => {
@@ -47,7 +65,7 @@ export default function Main({ updateUserData, projects }) {
       tasks: projectTasks.filter((task) => task !== deletedTask),
     };
     setCurrentTasks(filteredTasks);
-    setProjects({
+    handleProjectsUpdate({
       ...projects,
       [project]: filteredTasks,
     });

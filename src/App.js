@@ -39,7 +39,6 @@ function App() {
 
   const fetchDBData = async () => {
     const docLocation = doc(db, `users/${userInfo.id}`);
-
     const savedDataRef = await getDoc(docLocation);
     if (savedDataRef.exists()) {
       const savedData = savedDataRef.data();
@@ -50,9 +49,10 @@ function App() {
     }
   };
 
-  const updateUserData = async (data) => {
+  const pushUserData = async (data) => {
     const docLocation = doc(db, `users/${userInfo.id}`);
     setDoc(docLocation, data);
+
     const snapShot = await getDoc(docLocation);
     if (snapShot.exists()) {
       const data = snapShot.data();
@@ -60,24 +60,33 @@ function App() {
     }
   };
 
+  // possibly redundant. use it on autStateObserver
   useEffect(() => {
-    if (userInfo.id === "guest01") return;
-    fetchDBData();
+    if (getAuth().currentUser) {
+      fetchDBData();
+    } else {
+      setProjects(mockProjects);
+    }
   }, [userInfo]);
 
   useEffect(() => {
-    // console.log(userInfo);
     // check if guestmode
-    if (getAuth().currentUser === "Guest") return;
     const unsubscribe = onAuthStateChanged(getAuth(), authStateObserver);
     return () => unsubscribe();
   }, [isSignedIn]);
 
   useEffect(() => {
     console.log(projects);
-    if (projects.id === defaultProjects.userID) return;
-    updateUserData(projects);
+    console.log(isConnected, isSignedIn);
+    if (!getAuth().currentUser) return;
+    pushUserData(projects);
   }, [projects]);
+
+  const handleGuestClick = () => {
+    setProjects(mockProjects);
+    setUserInfo(defaultUser);
+    setIsSignedIn(true);
+  };
 
   const handleSignIn = async () => {
     try {
@@ -89,6 +98,7 @@ function App() {
       // Signed in info
       const user = res.user;
       console.log(user);
+      setIsConnected(true);
       setIsSignedIn(true);
     } catch (error) {
       // Handle Errors here.
@@ -104,9 +114,10 @@ function App() {
   };
 
   const handleSignOut = async () => {
+    setIsSignedIn(false);
+    if (!getAuth().currentUser) return;
     try {
       signOut(getAuth());
-      setIsSignedIn(false);
     } catch (err) {
       console.error(err);
     }
@@ -127,62 +138,28 @@ function App() {
     }
   };
 
-  const handleAddProject = (name) => {
-    // Sets a new project to the user object
-    const date = new Date().toLocaleDateString();
-    const newObject = {
-      name,
-      dateAdded: date,
-      tasks: [],
-    };
-    setProjects({
-      ...projects,
-      projects: { ...projects["projects"], [name]: newObject },
-    });
-  };
-
-  const handleDeleteProject = (name) => {
-    const updatedProjects = { ...projects };
-    delete updatedProjects.projects[name];
-    setProjects(updatedProjects);
-  };
-
-  const handleAddTask = (updatedTasks) => {
-    setProjects({
-      ...projects,
-      project: { ...projects["project"], updatedTasks },
-    });
-  };
-
-  const handleDeleteTask = (updatedProjects) => {
+  const handleProjectsUpdate = (updatedProjects) => {
     setProjects(updatedProjects);
   };
 
   const getMainComponent = () => {
     return projects ? (
-      { isConnected } ? (
-        <div>
-          <Header handleSignOut={handleSignOut} user={userInfo} />
-          <Main
-            updateUserData={updateUserData}
-            initialProject={projects}
-            handleAddProject={handleAddProject}
-            handleAddTask={handleAddTask}
-            handleDeleteProject={handleDeleteProject}
-            handleDeleteTask={handleDeleteTask}
-          />
-        </div>
-      ) : (
-        ""
-      )
+      <div>
+        <Header handleSignOut={handleSignOut} user={userInfo} />
+        <Main projects={projects} handleProjectsUpdate={handleProjectsUpdate} />
+      </div>
     ) : (
-      <div>Loading...</div>
+      <div>Loading...Projects</div>
     );
   };
+
   return isSignedIn ? (
     getMainComponent()
   ) : (
-    <SignInModal handleSignIn={handleSignIn} />
+    <SignInModal
+      handleSignIn={handleSignIn}
+      handleGuestClick={handleGuestClick}
+    />
   );
 }
 
