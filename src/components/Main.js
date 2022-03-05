@@ -6,22 +6,9 @@ import { isWithinInterval, add, startOfToday, parseISO } from "date-fns";
 import uniqid from "uniqid";
 
 export default function Main({ handleProjectsUpdate, projects }) {
-  // const [projects, setProjects] = useState({ inbox: { tasks: [] } });
-  const [currentTasks, setCurrentTasks] = useState({ tasks: [] });
-
-  // const fetchData = () => {
-  //   setProjects(mockAPI);
-  //   setCurrentTasks(mockAPI.inbox);
-  // };
-
-  //projects first project load
-  // setCurrentTasks(initialProject.inbox);
-  useEffect(() => {
-    setCurrentTasks(projects.inbox);
-  }, []);
+  const [currentTasks, setCurrentTasks] = useState(projects.inbox);
 
   const handleAddProject = (name) => {
-    // Sets a new project to the user object
     const date = new Date().toLocaleDateString();
     const newObject = {
       name,
@@ -46,7 +33,6 @@ export default function Main({ handleProjectsUpdate, projects }) {
   };
 
   const handleAddTask = ({ project, ...task }) => {
-    console.log(project, projects);
     const newTask = { ...task, id: uniqid() };
     const updatedTasks = projects[project].tasks.concat(newTask);
     const updatedProjects = {

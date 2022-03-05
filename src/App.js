@@ -1,12 +1,11 @@
 import Header from "./components/Header";
 import Main from "./components/Main";
 import "./App.css";
-import React, { useState, useEffect, useMemo } from "react";
-import { mockProjects } from "./projects";
+import React, { useState, useEffect, useRef } from "react";
+import { guestProjects, guestUser } from "./projects";
 import SignInModal from "./components/SignInModal";
 
 // Firebase imports
-import { getFirebaseConfig } from "./firebase-config";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -14,77 +13,64 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-
-// TODO Add to firebase
-const firebaseConfig = getFirebaseConfig();
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore();
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
 function App() {
-  const defaultUser = {
-    displayName: "Guest",
-    email: "demo@rike.com",
-    photoURL: "/somephoto",
-    id: "guest01",
-  };
-  const defaultProjects = { inbox: { tasks: [] } };
+  const defaultProjects = { inbox: { tasks: [], name: "inbox" } };
 
   // * State
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [projects, setProjects] = useState();
-  const [userInfo, setUserInfo] = useState(defaultUser);
+  const [userInfo, setUserInfo] = useState();
+  const firstLoad = useRef(true);
+
+  useEffect(() => {
+    if (getAuth().currentUser) {
+      fetchDBData();
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(getAuth(), authStateObserver);
+    return () => unsubscribe();
+  }, [isSignedIn]);
+
+  useEffect(() => {
+    if (!getAuth().currentUser || firstLoad.current) return;
+    pushUserData(projects);
+  }, [projects]);
 
   const fetchDBData = async () => {
+    // console.log(userInfo);
     const docLocation = doc(db, `users/${userInfo.id}`);
     const savedDataRef = await getDoc(docLocation);
     if (savedDataRef.exists()) {
       const savedData = savedDataRef.data();
       setProjects(savedData);
-      console.log("i saved the docs", savedData);
+      console.log("fetched db data", savedData);
     } else {
       setProjects({ ...defaultProjects });
+      console.log("failed fetch DB data. Creating a new One ");
     }
+    setIsSignedIn(true);
+    firstLoad.current = false;
   };
 
   const pushUserData = async (data) => {
     const docLocation = doc(db, `users/${userInfo.id}`);
     setDoc(docLocation, data);
 
-    const snapShot = await getDoc(docLocation);
-    if (snapShot.exists()) {
-      const data = snapShot.data();
-      console.log("docRef :>> ", data);
-    }
+    // const snapShot = await getDoc(docLocation);
+    // if (snapShot.exists()) {
+    //   const data = snapShot.data();
+    //   console.log("docRef :>> ", data);
+    // }
   };
 
-  // possibly redundant. use it on autStateObserver
-  useEffect(() => {
-    if (getAuth().currentUser) {
-      fetchDBData();
-    } else {
-      setProjects(mockProjects);
-    }
-  }, [userInfo]);
-
-  useEffect(() => {
-    // check if guestmode
-    const unsubscribe = onAuthStateChanged(getAuth(), authStateObserver);
-    return () => unsubscribe();
-  }, [isSignedIn]);
-
-  useEffect(() => {
-    console.log(projects);
-    console.log(isConnected, isSignedIn);
-    if (!getAuth().currentUser) return;
-    pushUserData(projects);
-  }, [projects]);
-
   const handleGuestClick = () => {
-    setProjects(mockProjects);
-    setUserInfo(defaultUser);
+    setProjects(guestProjects);
+    setUserInfo(guestUser);
     setIsSignedIn(true);
   };
 
@@ -97,29 +83,28 @@ function App() {
       const token = credentials.accessToken;
       // Signed in info
       const user = res.user;
-      console.log(user);
-      setIsConnected(true);
+      // console.log(user);
       setIsSignedIn(true);
     } catch (error) {
-      // Handle Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error);
       // ...
-      console.log(errorCode, errorMessage);
+      console.err(errorCode, errorMessage);
     }
   };
 
   const handleSignOut = async () => {
     setIsSignedIn(false);
-    if (!getAuth().currentUser) return;
-    try {
-      signOut(getAuth());
-    } catch (err) {
-      console.error(err);
+    setProjects();
+    firstLoad.current = false;
+    if (getAuth().currentUser) {
+      try {
+        signOut(getAuth());
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -132,9 +117,6 @@ function App() {
         photoURL,
         id: uid,
       });
-      setIsSignedIn(true);
-    } else {
-      setUserInfo(defaultUser);
     }
   };
 
@@ -143,6 +125,7 @@ function App() {
   };
 
   const getMainComponent = () => {
+    // console.log(isSignedIn);
     return projects ? (
       <div>
         <Header handleSignOut={handleSignOut} user={userInfo} />

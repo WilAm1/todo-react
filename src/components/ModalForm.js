@@ -12,7 +12,7 @@ export default function Modal({
     name: "",
     description: "",
     date: "",
-    priority: "",
+    priority: "low",
     project: "inbox",
   };
   const [formValues, setFormValues] = useState(blankForm);
@@ -61,7 +61,7 @@ export default function Modal({
                 name="name"
                 type="text"
                 value={formValues.name}
-                placeholder="Run for your life!"
+                placeholder="Do something Productive!"
                 required
               />
             </div>
@@ -83,7 +83,6 @@ export default function Modal({
                 name="date"
                 type="date"
                 value={formValues.date}
-                required
               />
             </div>
             <div className="input-wrapper">

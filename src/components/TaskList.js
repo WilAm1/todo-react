@@ -10,7 +10,6 @@ export default function Tasklist({
 }) {
   const { name, tasks } = project;
   const [showModal, setShowModal] = useState(false);
-
   const handleClose = () => {
     setShowModal(false);
   };
