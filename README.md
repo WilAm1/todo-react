@@ -1,4 +1,14 @@
-# Getting Started with Create React App
+# TODO App
+
+Written in ReactJS.
+
+## What I've Learned:
+
+- Material UI Framework
+- Firebase
+- useRef and useMemo
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
