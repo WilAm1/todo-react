@@ -20,7 +20,7 @@ const guestProjects = {
   },
   sampleProject: {
     dateCreated: "some date",
-    name: "Coding",
+    name: "sampleProject",
     tasks: [
       {
         name: "sampleTaskName",

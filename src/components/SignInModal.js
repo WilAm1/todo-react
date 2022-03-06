@@ -1,21 +1,20 @@
 import React from "react";
-
-// Add Modal
-// Welcome Header
-// TODO
-// Sign in button and Demo Account
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 export default function SignInModal({ handleSignIn, handleGuestClick }) {
   return (
     <div className="modal">
-      <div className="modal-content modal-main">
-        <div className="modal-header">
-          <h3>Welcome!</h3>
-        </div>
-        <div className="modal-body">
-          <button onClick={handleSignIn}>Sign in Google</button>
-          <button onClick={handleGuestClick}>Guest Mode</button>
-        </div>
+      <div className="modal-content modal-main sign-in-modal">
+        <Typography component="h3" variant="h3">
+          Welcome!
+        </Typography>
+        <Button variant="contained" onClick={handleSignIn}>
+          Sign in Google
+        </Button>
+        <Button variant="outlined" onClick={handleGuestClick}>
+          Guest Mode
+        </Button>
       </div>
     </div>
   );

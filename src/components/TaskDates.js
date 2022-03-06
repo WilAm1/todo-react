@@ -1,11 +1,17 @@
 import React from "react";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 export default function TaskDates({ children, handleClick }) {
   return (
-    <section className="task-dates-section">
+    <Stack spacing={2} direction="column">
       {children}
-      <button onClick={() => handleClick("today")}>Today</button>
-      <button onClick={() => handleClick("week")}>This Week </button>
-    </section>
+      <Button variant="outlined" onClick={() => handleClick("today")}>
+        Today
+      </Button>
+      <Button variant="outlined" onClick={() => handleClick("week")}>
+        This Week{" "}
+      </Button>
+    </Stack>
   );
 }

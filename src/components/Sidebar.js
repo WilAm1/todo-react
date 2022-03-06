@@ -1,7 +1,7 @@
 import React from "react";
 import ProjectList from "./ProjectList";
 import TaskDates from "./TaskDates";
-
+import Button from "@mui/material/Button";
 export default function Sidebar({
   handleAddProject,
   projectNames,
@@ -12,7 +12,13 @@ export default function Sidebar({
   return (
     <section className="menu-section section">
       <TaskDates handleClick={handleFilterClick}>
-        <button onClick={() => handleProjectClick("inbox")}>Inbox</button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => handleProjectClick("inbox")}
+        >
+          Inbox
+        </Button>
       </TaskDates>
       <ProjectList
         projects={projectNames}

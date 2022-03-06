@@ -1,6 +1,10 @@
 import React, { useState } from "react";
-import ModalForm from "./ModalForm";
+import TaskModal from "./ModalForm";
 import Task from "./Task";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import Typography from "@mui/material/Typography";
 
 export default function Tasklist({
   project,
@@ -18,18 +22,11 @@ export default function Tasklist({
   };
   return projectNames.length !== 0 ? (
     <section className="tasks-section section">
-      <ModalForm
-        projectNames={projectNames}
-        show={showModal}
-        handleClose={handleClose}
-        taskNames={project.tasks.reduce((accum, curr) => {
-          return !!curr.name ? accum.concat(curr.name) : accum;
-        }, [])}
-        handleAdd={handleAddTask}
-      />
-
-      <h3>{name}</h3>
-      <ul className="tasklist">
+      <Typography variant="h4" component="h4">
+        {name}
+      </Typography>
+      {/* <ul className="tasklist"> */}
+      <Stack spacing={2}>
         {tasks.map((task) => {
           return (
             <Task
@@ -39,14 +36,25 @@ export default function Tasklist({
             />
           );
         })}
-      </ul>
-      <button
+      </Stack>
+      {/* </ul> */}
+      <Button
         onClick={() => {
           setShowModal(!showModal);
         }}
+        startIcon={<AddIcon />}
       >
         New Task
-      </button>
+      </Button>
+      <TaskModal
+        projectNames={projectNames}
+        show={showModal}
+        handleClose={handleClose}
+        taskNames={project.tasks.reduce((accum, curr) => {
+          return !!curr.name ? accum.concat(curr.name) : accum;
+        }, [])}
+        handleAdd={handleAddTask}
+      />
     </section>
   ) : (
     <div>No Project Yet</div>

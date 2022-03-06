@@ -60,12 +60,6 @@ function App() {
   const pushUserData = async (data) => {
     const docLocation = doc(db, `users/${userInfo.id}`);
     setDoc(docLocation, data);
-
-    // const snapShot = await getDoc(docLocation);
-    // if (snapShot.exists()) {
-    //   const data = snapShot.data();
-    //   console.log("docRef :>> ", data);
-    // }
   };
 
   const handleGuestClick = () => {
@@ -98,7 +92,7 @@ function App() {
   const handleSignOut = async () => {
     setIsSignedIn(false);
     setProjects();
-    firstLoad.current = false;
+    firstLoad.current = true;
     if (getAuth().currentUser) {
       try {
         signOut(getAuth());

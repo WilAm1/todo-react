@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from "react";
 
-export default function Modal({
+// MUI styles
+import Backdrop from "@mui/material/Backdrop";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Fade from "@mui/material/Fade";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "30%",
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+export default function TaskModal({
   show,
   handleClose,
   taskNames,
@@ -47,35 +72,41 @@ export default function Modal({
   };
 
   return (
-    <div className={showHideClassName}>
-      <div className="modal-content modal-main ">
-        <div className="modal-header">
-          <h3>This is a modal!</h3>
-        </div>
-        <div className="modal-body">
-          <form className="form form-new-task" onSubmit={handleSubmit}>
-            <div className="input-wrapper">
-              <label htmlFor="title">Title</label>
-              <input
-                onChange={handleInputChange}
-                name="name"
-                type="text"
-                value={formValues.name}
-                placeholder="Do something Productive!"
-                required
-              />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="desc">Description</label>
-              <textarea
-                onChange={handleInputChange}
-                name="description"
-                type="text"
-                value={formValues.description}
-              />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="due-date">Date</label>
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      open={show}
+      onClose={handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+      <Fade in={show}>
+        <Box sx={style}>
+          <Typography id="transition-modal-title" variant="h6" component="h3">
+            Add Task
+          </Typography>
+          <Box
+            className="form form-new-task"
+            onSubmit={handleSubmit}
+            component="form"
+          >
+            <TextField
+              onChange={handleInputChange}
+              name="name"
+              type="text"
+              value={formValues.name}
+              placeholder="Do something Productive!"
+              required
+              label="Task Name"
+              size="small"
+            />
+            <Box component="span">
+              <InputLabel htmlFor="due-date" component={"label"}>
+                Date
+              </InputLabel>
               <input
                 onChange={(e) => {
                   handleInputChange(e);
@@ -83,47 +114,62 @@ export default function Modal({
                 name="date"
                 type="date"
                 value={formValues.date}
+                style={{ fontSize: `1rem`, height: "2rem" }}
               />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="priority">Priority</label>{" "}
-              <select
+            </Box>
+            <Box>
+              <InputLabel>Description</InputLabel>
+              <TextareaAutosize
+                onChange={handleInputChange}
+                name="description"
+                type="text"
+                value={formValues.description}
+                placeholder="Something descriptive"
+                minRows={5}
+                minCols={5}
+              />
+            </Box>
+            <Box className="input-wrapper">
+              <InputLabel id="priority">Priority</InputLabel>{" "}
+              <Select
                 name="priority"
-                id="priority"
+                labelFor="priority"
                 value={formValues.priority}
                 onChange={handleInputChange}
                 required
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="project-name">Category</label>{" "}
-              <select
+                <MenuItem value="low">Low</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="high">High</MenuItem>
+              </Select>
+            </Box>
+            <Box className="input-wrapper">
+              <InputLabel id="project-name">Category</InputLabel>{" "}
+              <Select
                 name="project"
-                id="project-name"
+                labelId="project-name"
                 value={formValues.project}
                 onChange={handleInputChange}
                 required
               >
                 {projectNames.map((name) => {
                   return (
-                    <option value={name} key={name}>
+                    <MenuItem value={name} key={name}>
                       {name}
-                    </option>
+                    </MenuItem>
                   );
                 })}
-              </select>
-            </div>
-            <button>Add Task</button>
-            <button onClick={handleClose} type="button">
+              </Select>
+            </Box>
+            <Button type="submit" variant="contained">
+              Add Task
+            </Button>
+            <Button onClick={handleClose} type="button" variant="text">
               Close
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+            </Button>
+          </Box>
+        </Box>
+      </Fade>
+    </Modal>
   );
 }

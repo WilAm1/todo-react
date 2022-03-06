@@ -5,28 +5,23 @@
   margin: 0;
   padding: 0;
   box-sizing: inherit;
-  /* border: 1px solid red; */
 }
 
 body {
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Roboto, Helvetica, sans-serif;
 }
 
-#root {
-}
-header {
-  /* height: 15vh; */
-}
 main {
   display: grid;
   grid-template-columns: minmax(300px, 20vw) 1fr;
   min-height: 80vh;
+  padding: 2rem;
 }
-.task-dates-section {
+header {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  justify-content: space-between;
+  padding: 1rem 2rem;
 }
 .tasks-section {
   margin: 0 auto;
@@ -56,7 +51,12 @@ main {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
+.sign-in-modal {
+  padding: 2rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
 .display-block {
   display: block;
 }
