@@ -10,6 +10,7 @@
 body {
   box-sizing: border-box;
   font-family: Roboto, Helvetica, sans-serif;
+  background-color: #fafbfd;
 }
 
 main {
@@ -55,7 +56,13 @@ header {
   padding: 2rem;
   display: flex;
   gap: 2rem;
+  justify-content: space-around;
+}
+.sign-in-modal > div {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 2rem;
 }
 .display-block {
   display: block;

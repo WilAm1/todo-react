@@ -9,12 +9,14 @@ export default function SignInModal({ handleSignIn, handleGuestClick }) {
         <Typography component="h3" variant="h3">
           Welcome!
         </Typography>
-        <Button variant="contained" onClick={handleSignIn}>
-          Sign in Google
-        </Button>
-        <Button variant="outlined" onClick={handleGuestClick}>
-          Guest Mode
-        </Button>
+        <div>
+          <Button variant="contained" onClick={handleSignIn}>
+            Sign in Google
+          </Button>
+          <Button variant="outlined" onClick={handleGuestClick}>
+            Guest Mode
+          </Button>
+        </div>
       </div>
     </div>
   );

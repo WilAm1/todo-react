@@ -17,7 +17,7 @@ export default function Task({ task, handleDelete }) {
     <div className={`task ${isExpired}`}>
       <Accordion
         sx={{
-          borderLeft: "10px solid green",
+          borderLeft: "10px solid violet",
         }}
       >
         <AccordionSummary
